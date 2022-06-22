@@ -1,0 +1,84 @@
+function startGame(){
+    for(i = 0; i < valueCard.lenght; i++){
+        jeu = zoneJeu[i].lenght;
+        for(x = 0; x < jeu.lenght; x++){
+            // jeu[x].style.background = '';
+            jeu[x].className = 'back'
+        }
+    }
+    count = 0;
+    rejouer.disabled = true;
+    donne();
+}
+
+function donne(){
+    var nbrCarte = (valueCard[0].lenght * valueCard.lenght);
+    debug.style.display = (modeDebug) ? "block" : "none";
+    if(nbrValeur == nbrCarte){
+        while(OK){
+            var tirage = Math.floor(Math.random() * nbrCarte)
+            var reg = new RegExp("#"+tirage+":", "gi")
+
+            if(!reg.test(buffer)){
+                arrayDonne[compteur] = valueCard[tirage];
+                buffer += "#" +tirage+ ":";
+
+                message.innerHTML = buffer;
+                compteur ++;
+                if(compteur ==nbrCarte) OK = false;
+            }
+        }
+    }
+}
+
+function reset(objId, objLast){
+    objId = document.getElementById(objId);
+    objLast = document.getElementById(objLast);
+
+    objId.style.background = "";
+    objLast.style.background = "";
+
+    objId.className = "back";
+    objLast.className = "back";
+    tirage = true;
+}
+
+
+function play(objId){
+    if(tirage && objId.className != "front"){
+        tirage = false; 
+        if(lastCard == null){
+            objId.className = "front";
+            // objId.style.background
+            lastCard = objId;
+            tirage = true;
+        }
+        else{
+            if(lastCard.id != objId.id && objId.className != "front"){
+                objId.className = "front";
+
+                if(arrayDonne[objId.id] != arrayDonne[lastCard.id]){
+                    a = setTimeout("reset(" +objId.id+ "," +lastCard.id+ ")", temp);
+                    lastCard = null;
+                }
+                else{
+                    lastCard = null; 
+                    count ++;
+                    pairesTrv ++;
+                    document.getElementById('paires').innerHTML = pairesTrv;
+
+                    if(count == (nbrValeur/2)){
+                        win ++;
+                        document.getElementById('nbrGagner').innerHTML = win;
+                        rejouer.disabled = false; 
+                    }
+                    tirage = true;
+                }
+                essaie ++;
+                document.getElementById('try').innerHTML = essaie;
+            }
+        }
+    }
+}
+
+window.onload = donne;
